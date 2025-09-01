@@ -1,0 +1,11 @@
+
+.scriptBox {
+	background-color: #eeeeee;
+	color: black;
+	position: absolute;
+	right: 20px;
+	top: 10vh;
+	height: 80vh;
+
+	width: 40vw;
+}
