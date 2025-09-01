@@ -7,7 +7,7 @@ export default function Home() {
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <GCodeBLock gcode="G1 X30 F1000"></GCodeBLock>
-        <GCodeBLock></GCodeBLock>
+        <GCodeBLock gcode="G92 " comment="Home Axis" suffixBox={true} suffixDefault="XYZ"></GCodeBLock>
         <GCodeBLock></GCodeBLock>
         <GCodeBLock></GCodeBLock>
         <Image
