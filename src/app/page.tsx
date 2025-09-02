@@ -1,110 +1,57 @@
-import Image from "next/image";
-import { GCodeBLock } from "./gcodeblock";
+"use client"
+import { GCodeBlock } from "./gcodeblock";
+import type { GCodeBlockData } from "./gcodeblock";
 import { ScriptBox } from "./scriptbox";
+import { useState } from "react";
+
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <GCodeBLock gcode="G1 X30 F1000"></GCodeBLock>
-        <GCodeBLock gcode="G92 " comment="Home Axis" suffixBox={true} suffixDefault="XYZ"></GCodeBLock>
-        <GCodeBLock></GCodeBLock>
-        <GCodeBLock></GCodeBLock>
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ScriptBox></ScriptBox>
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [scriptBlocks, setScriptBlocks] = useState<GCodeBlockData[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+
+  const addGCodeBlock = (gcode: string, comment: string, suffixBox: boolean, suffixDefault: string) => {
+    // Add a new GCodeBlock to the scriptBlocks state
+    setScriptBlocks([...scriptBlocks, { gcode, comment, suffixBox, suffixDefault }]);
+  };
+
+  return (
+    <div className="font-sans min-h-screen p-8 mt-1 pb-20 sm:p-20">
+      <main className="">
+        <div className="overflow-scroll flex flex-col gap-[12px] row-start-2 max-h-[80vh] bg-[#111111] w-[30vw]">
+            Blocks:
+          <h3>move</h3>
+            <GCodeBlock gcode="G1 " comment="Linear Move" suffixBox={true} suffixDefault="Xn Yn Zn" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="G0 " comment="Fast Move" suffixBox={true} suffixDefault="Xn Yn Zn" onClick={addGCodeBlock}></GCodeBlock>
+          <h3>coords</h3>
+            <GCodeBlock gcode="G28 " comment="Home Axis" suffixBox={true} suffixDefault="X Y Z" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="G92 " comment="Zero Axis" suffixBox={true} suffixDefault="X0 Y0 Z0" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="G90" comment="Absolute Positioning" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="G91" comment="Relative Positioning" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="G53" comment="Machine Coords" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="G54" comment="Offset Coords 1" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="G55" comment="Offset Coords 2" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="G56" comment="Offset Coords 3" onClick={addGCodeBlock}></GCodeBlock>
+          <h3>temps</h3>
+            <GCodeBlock gcode="M140 S" comment="Set Bed Temp (fast)" suffixBox={true} suffixDefault="0" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="M190 " comment="Set Bed Temp and wait" suffixBox={true} suffixDefault="S0" onClick={addGCodeBlock}></GCodeBlock>
+
+          <h3>misc</h3>
+            <GCodeBlock gcode="G4 " comment="Wait" suffixBox={true} suffixDefault="P10" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="M300 " comment="Beep" suffixBox={true} suffixDefault="" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode="" comment="Custom" suffixBox={true} suffixDefault="" onClick={addGCodeBlock}></GCodeBlock>
+            <GCodeBlock gcode=";" comment="Comment" suffixBox={true} suffixDefault="" onClick={addGCodeBlock}></GCodeBlock>
+          <h3>advanced</h3>
+          <GCodeBlock gcode="M203 " comment="Set Max Feedrate" suffixBox={true} suffixDefault="X300" onClick={addGCodeBlock}></GCodeBlock>
+          <GCodeBlock gcode="M302 S" comment="Set Min Extrusion Temp" suffixBox={true} suffixDefault="0" onClick={addGCodeBlock}></GCodeBlock>
+          <GCodeBlock gcode="M120" comment="Enable Endstops" onClick={addGCodeBlock}></GCodeBlock>
+          <GCodeBlock gcode="M121" comment="Disable Endstops" onClick={addGCodeBlock}></GCodeBlock>
         </div>
+
+        <ScriptBox contents={scriptBlocks}></ScriptBox>
+        
+        {/*<button className="absolute right-30 bg-[#888888]" onClick={processGcode}>Process</button>*/}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
     </div>
   );
 }

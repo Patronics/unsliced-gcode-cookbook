@@ -1,30 +1,69 @@
 "use client"
 import "./gcodeblock.css"
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-function GCodeBLock({gcode = ";GCODE GOES HERE", comment="", suffixBox=false, suffixDefault=""}){
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+
+interface GCodeBlockProps {
+	index?: number;
+    gcode?: string;
+    comment?: string;
+    suffixBox?: boolean;
+    suffixDefault?: string;
+    onClick?: (gcode: string, comment: string, suffixBox: boolean, suffixContent: string) => void;
+	onChange?: (index:number, gcode: string, comment: string, suffixBox: boolean, suffixContent: string) => void;
+}
+interface GCodeBlockData {
+	gcode: string;
+	comment: string;
+	suffixBox: boolean;
+	suffixDefault: string;
+}
+
+function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox=false, suffixDefault="", onClick, onChange}:GCodeBlockProps){
 	const [suffixContent, setSuffixContent] = useState("")
 	useEffect(() => {
 		setSuffixContent(suffixDefault)
-
+		const resizeTimer = setTimeout(() => {
+			if (inputRef.current) {
+				resizeInput(inputRef.current);
+			}
+		}, 50); // Delay to allow rendering, wait 50ms
+		return () => clearTimeout(resizeTimer); // Cleanup the timer
 
 	}, [suffixDefault])
 
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	function handleClick() {
+		if (onClick) {
+			onClick(gcode, comment, suffixBox, suffixContent);
+		}
+	}
+
+	function handleChangeAndSize(ev: ChangeEvent<HTMLInputElement>, handleChange: Dispatch<SetStateAction<string>>) {
+	const target = ev.target;
+	resizeInput(target)
+	if (onChange){
+		onChange(index, gcode, comment, suffixBox, target.value)
+	}
+	handleChange(target.value);
+};
+
 	return (
 		<>
-			<div className="gcodeBlock orange" draggable={true}>
-				{comment? comment +": ": ""}{gcode}{suffixBox? (<input type="text" className="suffixBox" role="input" defaultValue={suffixContent} onChange={e => handleChangeAndSize(e, setSuffixContent)}></input>):""}
+			<div className="gcodeBlock orange" draggable={true} onClick={handleClick}>
+				{comment? comment +": ": ""}<span className="font-mono">{gcode}{suffixBox? (<input ref={inputRef} type="text" className="suffixBox" role="input" defaultValue={suffixContent} onChange={e => handleChangeAndSize(e, setSuffixContent)} onClick={e => e.stopPropagation()}></input>):""}</span>
 			</div>
 		</>
 	)
 }
 
-   const handleChangeAndSize = (ev: ChangeEvent<HTMLInputElement>, handleChange: Dispatch<SetStateAction<string>>) => {
-      const target = ev.target;
-      target.style.width = '1em';
-      target.style.width = `${target.scrollWidth}px`;
 
-      handleChange(ev.target.value);
-   };
+const resizeInput = (input: HTMLInputElement) => {
+	input.style.width = '1em'; // Reset width to shrink
+	input.style.width = `${input.scrollWidth}px`; // Set width to fit content
+};
 
-export {GCodeBLock}
+export {GCodeBlock}
+
+export type {GCodeBlockData}
