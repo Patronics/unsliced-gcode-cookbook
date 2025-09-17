@@ -1,6 +1,5 @@
 
 .gcodeBlock {
-	background-color: #9F5F1F;
 	color: black;
 	padding-top: 0.25em;
 	padding-bottom: 0.25em;
@@ -8,6 +7,15 @@
 	padding-right: 1.5em;
 	width: fit-content;
 	border-radius: 10px;
+}
+
+.orange {
+	color: black;
+	background-color: #9F5F1F;
+}
+
+.purple {
+	background-color: #7a5bc8;
 }
 
 .suffixBox {

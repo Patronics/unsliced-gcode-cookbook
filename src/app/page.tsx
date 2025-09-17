@@ -9,9 +9,9 @@ export default function Home() {
   const [scriptBlocks, setScriptBlocks] = useState<GCodeBlockData[]>([]);
 
 
-  const addGCodeBlock = (gcode: string, comment: string, suffixBox: boolean, suffixDefault: string) => {
+  const addGCodeBlock = (gcode: string, comment: string, suffixBox: boolean, suffixDefault: string, special?: string) => {
     // Add a new GCodeBlock to the scriptBlocks state
-    setScriptBlocks([...scriptBlocks, { gcode, comment, suffixBox, suffixDefault }]);
+    setScriptBlocks([...scriptBlocks, { gcode, comment, suffixBox, suffixDefault, special }]);
   };
 
   return (
@@ -22,6 +22,9 @@ export default function Home() {
           <h3>move</h3>
             <GCodeBlock gcode="G1 " comment="Linear Move" suffixBox={true} suffixDefault="Xn Yn Zn" onClick={addGCodeBlock}></GCodeBlock>
             <GCodeBlock gcode="G0 " comment="Fast Move" suffixBox={true} suffixDefault="Xn Yn Zn" onClick={addGCodeBlock}></GCodeBlock>
+          <h3>flow control</h3>
+            <GCodeBlock gcode=";" comment="start loop" suffixBox={true} suffixDefault="C2" onClick={addGCodeBlock} special="loopStart"></GCodeBlock>
+            <GCodeBlock gcode=";" comment="end loop" suffixBox={false} onClick={addGCodeBlock} special="loopEnd"></GCodeBlock>
           <h3>coords</h3>
             <GCodeBlock gcode="G28 " comment="Home Axis" suffixBox={true} suffixDefault="X Y Z" onClick={addGCodeBlock}></GCodeBlock>
             <GCodeBlock gcode="G92 " comment="Zero Axis" suffixBox={true} suffixDefault="X0 Y0 Z0" onClick={addGCodeBlock}></GCodeBlock>

@@ -9,9 +9,10 @@ interface GCodeBlockProps {
     comment?: string;
     suffixBox?: boolean;
     suffixDefault?: string;
-    onClick?: (gcode: string, comment: string, suffixBox: boolean, suffixContent: string) => void;
+    onClick?: (gcode: string, comment: string, suffixBox: boolean, suffixContent: string, special?: string) => void;
 	onChange?: (index:number, gcode: string, comment: string, suffixBox: boolean, suffixContent: string) => void;
 	onRemove?: (index:number) => void;
+	special?: string;
 }
 interface GCodeBlockData {
 	gcode: string;
@@ -21,7 +22,7 @@ interface GCodeBlockData {
 	special?: string
 }
 
-function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox=false, suffixDefault="", onClick, onChange, onRemove}:GCodeBlockProps){
+function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox=false, suffixDefault="", onClick, onChange, onRemove, special}:GCodeBlockProps){
 	const [suffixContent, setSuffixContent] = useState("")
 	useEffect(() => {
 		setSuffixContent(suffixDefault)
@@ -35,10 +36,14 @@ function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox
 	}, [suffixDefault])
 
 	const inputRef = useRef<HTMLInputElement>(null);
+	let color = "orange"
+	if(special){
+		color = "purple"
+	}
 
 	function handleClick() {
 		if (onClick) {
-			onClick(gcode, comment, suffixBox, suffixContent);
+			onClick(gcode, comment, suffixBox, suffixContent, special);
 		}
 	}
 
@@ -57,7 +62,7 @@ function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox
 
 	return (
 		<>
-			<div className="gcodeBlock orange" draggable={true} onClick={handleClick}>
+			<div className={"gcodeBlock "+color} draggable={true} onClick={handleClick}>
 				{comment? comment +": ": ""}<span className="font-mono">{gcode}{suffixBox? (<input ref={inputRef} type="text" className="suffixBox" role="input" defaultValue={suffixContent} onChange={e => handleChangeAndSize(e, setSuffixContent)} onClick={e => e.stopPropagation()}></input>):""}</span>
 				{onRemove? (<span className="removeBlockBtn" onClick={e => {handleRemove()}}> ❌</span>): ""}
 			</div>
