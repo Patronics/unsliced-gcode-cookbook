@@ -4,11 +4,12 @@ import { GCodeBlock } from './gcodeblock';
 import type {GCodeBlockData} from './gcodeblock'
 
 interface ScriptBoxProps {
-	contents: GCodeBlockData[]
+	contents: GCodeBlockData[];
+	onUpdateContents: (contents: GCodeBlockData[]) => void;
 }
 
 
-function ScriptBox({contents}: ScriptBoxProps){
+function ScriptBox({contents, onUpdateContents}: ScriptBoxProps){
 	const [gcodeBlocks, setGcodeBlocks] = useState<GCodeBlockData[]>(contents);
 
 	useEffect(() => {
@@ -29,6 +30,12 @@ function ScriptBox({contents}: ScriptBoxProps){
 		);
 	}
 
+	function removeBlock(index:number){
+		const newGcodeBlocks = [...gcodeBlocks.slice(0,index), ...gcodeBlocks.slice(index+1)]
+		setGcodeBlocks(newGcodeBlocks)
+		onUpdateContents(newGcodeBlocks)
+	}
+
 	return (
 	<>
 		<div className="scriptBox overflow-scroll">
@@ -41,6 +48,7 @@ function ScriptBox({contents}: ScriptBoxProps){
 					suffixBox={block.suffixBox}
 					suffixDefault={block.suffixDefault}
 					onChange={updateOnBlockChange}
+					onRemove={removeBlock}
 				/>
 			))}
 		</div>

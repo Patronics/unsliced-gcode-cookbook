@@ -11,15 +11,17 @@ interface GCodeBlockProps {
     suffixDefault?: string;
     onClick?: (gcode: string, comment: string, suffixBox: boolean, suffixContent: string) => void;
 	onChange?: (index:number, gcode: string, comment: string, suffixBox: boolean, suffixContent: string) => void;
+	onRemove?: (index:number) => void;
 }
 interface GCodeBlockData {
 	gcode: string;
 	comment: string;
 	suffixBox: boolean;
 	suffixDefault: string;
+	special?: string
 }
 
-function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox=false, suffixDefault="", onClick, onChange}:GCodeBlockProps){
+function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox=false, suffixDefault="", onClick, onChange, onRemove}:GCodeBlockProps){
 	const [suffixContent, setSuffixContent] = useState("")
 	useEffect(() => {
 		setSuffixContent(suffixDefault)
@@ -40,6 +42,10 @@ function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox
 		}
 	}
 
+	function handleRemove() {
+		onRemove!(index)
+	}
+
 	function handleChangeAndSize(ev: ChangeEvent<HTMLInputElement>, handleChange: Dispatch<SetStateAction<string>>) {
 	const target = ev.target;
 	resizeInput(target)
@@ -53,6 +59,7 @@ function GCodeBlock({index=-1, gcode = ";GCODE GOES HERE", comment="", suffixBox
 		<>
 			<div className="gcodeBlock orange" draggable={true} onClick={handleClick}>
 				{comment? comment +": ": ""}<span className="font-mono">{gcode}{suffixBox? (<input ref={inputRef} type="text" className="suffixBox" role="input" defaultValue={suffixContent} onChange={e => handleChangeAndSize(e, setSuffixContent)} onClick={e => e.stopPropagation()}></input>):""}</span>
+				{onRemove? (<span className="removeBlockBtn" onClick={e => {handleRemove()}}> ❌</span>): ""}
 			</div>
 		</>
 	)

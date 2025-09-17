@@ -47,7 +47,7 @@ export default function Home() {
           <GCodeBlock gcode="M121" comment="Disable Endstops" onClick={addGCodeBlock}></GCodeBlock>
         </div>
 
-        <ScriptBox contents={scriptBlocks}></ScriptBox>
+        <ScriptBox contents={scriptBlocks} onUpdateContents={(contents) => setScriptBlocks(contents)}></ScriptBox>
         
         {/*<button className="absolute right-30 bg-[#888888]" onClick={processGcode}>Process</button>*/}
       </main>
